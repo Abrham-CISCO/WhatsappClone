@@ -8,6 +8,48 @@ import { SearchOutlined } from '@material-ui/icons';
 import SidebarChat from "./SidebarChat";
 import db from './firebase'
 import {UseStateValue} from './StateProvider'
+
+function allUsers()
+{
+    db.collection('user').onSnapshot(snapshot => {
+        var users = snapshot.docs.map(doc=>({user:doc.data()}))
+        return users;
+    })
+}
+
+function addUserToAGroup(roomId, userID)
+{
+    db.collection('rooms').doc(roomId)
+    .collection('members').add({
+        uid:userID,
+        admin:false
+    })
+}
+
+function GroupMembers(roomId)
+{
+    db.collection('rooms').doc(roomId)
+    .onSnapshot(snapshot=>{
+        var members = snapshot.docs.map(doc=>(doc.data()))
+        return members;
+    })
+}
+
+function nonGroupMembers(roomId)
+{
+    var members = GroupMembers(roomId);
+    var allUsers = allUsers();
+    var found = false;
+    var nonMembers = allUsers.map(user=>{
+        found = false;
+        members.forEach(member => {
+            if(user.uid === member.uid) found = true;
+            else found = false;
+        });
+        if(!found) return user.uid;
+    })
+    return nonMembers;
+}
 function Sidebar()
 {
     const [{user},dispatch]= UseStateValue();

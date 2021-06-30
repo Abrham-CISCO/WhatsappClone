@@ -3,9 +3,12 @@ import React, {useEffect, useState} from 'react';
 import './SidebarChat.css';
 import db from './firebase';
 import {Link} from 'react-router-dom';
+import {UseStateValue} from "./StateProvider";
+import firebase from "firebase";
 
 function SidebarChat({id, name, addNewChat}) {
     const [seed, setSeed] = useState('');
+    const [{user},dispatch]= UseStateValue();
     const [messages, setMessages] = useState('');
     useEffect(()=>{
         if(id) {
@@ -24,11 +27,18 @@ function SidebarChat({id, name, addNewChat}) {
         setSeed(Math.floor(Math.random()*5000))
     }, [])
     const createChat = () => {
+        var members = [];
+        var uDate=firebase.firestore.FieldValue.serverTimestamp();
+        members.pop();
+        members.push({uid:user.uid,admin:true});
         const roomName = prompt("Please enter name for chat room");
         if(roomName) {
             // do some clever database staff...
             db.collection('rooms').add({
-                name: roomName
+                name: roomName,
+                creator: user.uid,
+                members:members,
+                createdOn:firebase.firestore.FieldValue.serverTimestamp()
             })
         }
     };
