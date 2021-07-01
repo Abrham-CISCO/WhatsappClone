@@ -8,7 +8,8 @@ import { SearchOutlined } from '@material-ui/icons';
 import SidebarChat from "./SidebarChat";
 import db from './firebase'
 import {UseStateValue} from './StateProvider'
-
+import Popup from 'reactjs-popup'
+import 'reactjs-popup/dist/index.css';
 function allUsers()
 {
     db.collection('user').onSnapshot(snapshot => {
@@ -83,9 +84,16 @@ function Sidebar()
                 <IconButton>
                     <ChatIcon />
                 </IconButton>
-                <IconButton>
-                    <MoreVertIcon/>
-                </IconButton>
+                <Popup trigger={<IconButton><MoreVertIcon /></IconButton>} position="top left">
+                    {close => (
+                    <div>
+                        Content here
+                        <a className="close" onClick={close}>
+                        &times;
+                        </a>
+                    </div>
+                    )}
+                </Popup>
             </div>
         </div>
         <div className="sidebar__search">

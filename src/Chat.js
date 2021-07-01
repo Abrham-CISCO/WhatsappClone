@@ -8,6 +8,9 @@ import {useParams} from 'react-router-dom';
 import firebase from "firebase";
 import { AttachFile, MoreVert, SearchOutlined } from '@material-ui/icons';
 import {UseStateValue} from "./StateProvider";
+import Popup from 'reactjs-popup'
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import 'reactjs-popup/dist/index.css';
 function Chat() {
     const [seed, setSeed] = useState("");
     const [input, setInput] = useState("");
@@ -62,9 +65,18 @@ function Chat() {
                 <IconButton>
                     <AttachFile/>
                 </IconButton>
-                <IconButton>
-                    <MoreVert/>
-                </IconButton>
+                <Popup trigger={<IconButton><MoreVertIcon /></IconButton>} position="bottom right" modal nested>
+                    {close => (
+                    <div className="modal">
+                        Content here
+                        <button className="close" onClick={close}>
+                        &times;
+                        </button>
+                    </div>
+
+
+                    )}
+                </Popup>
             </div>
             </div>
             <div className="chat__body">
