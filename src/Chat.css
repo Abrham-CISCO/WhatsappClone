@@ -187,3 +187,19 @@
     border: solid 5px white;
     box-shadow: 0px 0px 180px 1px rgb(210, 224, 224); 
 }
+
+.modal > p{
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.modal{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.addUser {
+    padding-top: 10px;
+}

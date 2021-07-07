@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import './Chat.css';
 import db from './firebase'
 import {Avatar, IconButton} from "@material-ui/core"
+import Button from '@material-ui/core/Button';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import MicIcon from '@material-ui/icons/Mic';
 import AddIcon from '@material-ui/icons/Add';
@@ -12,14 +13,21 @@ import {UseStateValue} from "./StateProvider";
 import Popup from 'reactjs-popup'
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import 'reactjs-popup/dist/index.css';
+import Select from 'react-select';
 function Chat() {
     const [seed, setSeed] = useState("");
     const [input, setInput] = useState("");
+    const [selectedUsers, setSelectedUsers] = useState([])
     const { roomId } = useParams();
     const [roomName, setRoomName] = useState("");
     const [messages, setMessages] = useState([]);
     const [{user}, dispatch] = UseStateValue();
-    console.log(roomId)
+    const options = [
+        { value: 'Abrham Getachew', label: 'Abrham Getachew' },
+        { value: 'Getachew Biru', label: 'Getachew Biru' },
+        { value: 'Sosina Sehalu', label: 'Sosina Sehalu' },
+        { value: 'Ruth Getachew', label: 'Ruth Getachew' }
+      ]
     useEffect(()=> {
         if(roomId){
             db.collection('rooms').doc(roomId)
@@ -52,21 +60,8 @@ function Chat() {
     return (
         <div className = "chat">
             <div className="chat__header">
-                <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`}/>
-            <div className="chat__headerInfo">
-                <h3>{roomName}</h3>
-                <p>Last seen {" "}
-                {new Date(messages[messages.length - 1]?.timestamp?.toDate()).toUTCString()}
-                </p>
-            </div>
-            <div className="chat__headerRight">
-                <IconButton>
-                    <SearchOutlined/>
-                </IconButton>
-                <IconButton>
-                    <AttachFile/>
-                </IconButton>
-                <Popup trigger={<IconButton><MoreVertIcon /></IconButton>} position="bottom right" modal nested>
+            
+                <Popup trigger={<IconButton><Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`}/></IconButton>} position="bottom right" modal nested>
                     {close => (
                     <div className="modal">
                         <button className="close" onClick={close}>
@@ -113,10 +108,34 @@ function Chat() {
                                     </div>
                                     <div className="member">
                                         <div className = "addNewMember">
-                                            <IconButton>
-                                            <AddIcon/>
-                                            </IconButton>
-                                            </div>  
+                                            <Popup trigger={<IconButton><AddIcon /></IconButton>} position="bottom right" modal nested>
+                                            {close => (
+                                                <div className="modal">
+                                                    <button className="close" onClick={close}>
+                                                    &times;
+                                                    </button>
+                                                    <h1>Add Members</h1>
+                                                    <p>From the following list of users select the user you want to add to the group and then click add</p>
+                                                    {/*<select name="userList" id="userList" multiple={true}
+                                                        onChange={(e)=> {setSelectedUsers(e.target.value)
+                                                                        console.log(e.target.value)}} value={selectedUsers}>
+                                                        <option value="Abrham Getachew">Abrham Getachew</option>
+                                                        <option value="Sosina Sehalu">Sosina Sehalu</option>
+                                                        <option value="Ruth Getachew">Ruth Getachew</option>
+                                                        <option value="Getachew Birru">Getachew Birru</option>
+                                                        </select>*/}
+                                                        <Select options={options} onChange={(e)=>{
+                                                            console.log(e)
+                                                        }} isMulti />
+                                                    <div className="addUser">
+                                                    <Button className = "addUser" variant="contained" color="primary">
+                                                       Add Users
+                                                    </Button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            </Popup>
+                                        </div>  
                                     </div>
                                 </div>
 
@@ -127,6 +146,20 @@ function Chat() {
 
                     )}
                 </Popup>
+            <div className="chat__headerInfo">
+                <h3>{roomName}</h3>
+                <p>Last seen {" "}
+                {new Date(messages[messages.length - 1]?.timestamp?.toDate()).toUTCString()}
+                </p>
+            </div>
+            <div className="chat__headerRight">
+                <IconButton>
+                    <SearchOutlined/>
+                </IconButton>
+                <IconButton>
+                    <AttachFile/>
+                </IconButton>
+                <IconButton><MoreVertIcon /></IconButton>
             </div>
             </div>
             <div className="chat__body">
