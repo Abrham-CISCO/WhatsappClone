@@ -17,7 +17,7 @@ import Select from 'react-select';
 function Chat() {
     const [seed, setSeed] = useState("");
     const [input, setInput] = useState("");
-    const [users, setUsers] = useState({});
+    const [users, setUsers] = useState([]);
     const [selectedUsers, setSelectedUsers] = useState([])
     const { roomId } = useParams();
     const [roomName, setRoomName] = useState("");
