@@ -17,12 +17,13 @@ import Select from 'react-select';
 function Chat() {
     const [seed, setSeed] = useState("");
     const [input, setInput] = useState("");
-    const [users, setUsers] = useState([]);
+    const [candidateUsers,setCandidateUsers] = useState([])
     const [selectedUsers, setSelectedUsers] = useState([])
     const { roomId } = useParams();
     const [roomName, setRoomName] = useState("");
     const [messages, setMessages] = useState([]);
     const [{user}, dispatch] = UseStateValue();
+
 
     useEffect(()=> {
         if(roomId){
@@ -53,37 +54,42 @@ function Chat() {
         setInput("");
     }
 
-    const addUsers = (user) => {
-        useParams.foreach(user=>{
+    const addUsers = () => {
+        selectedUsers.forEach(user=>{
             db.collection('rooms').doc(roomId)
             .collection('members').add({
-                uid:user,
+                uid:user.value,
                 admin:false
             })    
         })
+        console.log(selectedUsers);
     }
 
-    db.collection('user').onSnapshot(snapshot => (
-        setUsers(snapshot.docs.map((doc)=>({
-            id:doc.id,
-            data: doc.data()
-        })
-        ))
-    ))
+    useEffect(()=> {
+        db.collection('user').onSnapshot(snapshot => (
+            setCandidateUsers(snapshot.docs.map((doc)=>({
+                id:doc.id,
+                data: doc.data()
+            })
+            ))
+        )
+        )
+    },[roomId])
 
+        
     const options = []
     options.pop();
-    users.foreach(user=>{
+    candidateUsers.forEach(candidateUser=>{
         options.push({
-            value:user.data.uid,
-            label:user.data.name
+            value:candidateUser.data.uid,
+            label:candidateUser.data.name
         })    
     })
 
+    console.log(options)
     return (
         <div className = "chat">
             <div className="chat__header">
-            
                 <Popup trigger={<IconButton><Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`}/></IconButton>} position="bottom right" modal nested>
                     {close => (
                     <div className="modal">
@@ -151,7 +157,7 @@ function Chat() {
                                                             setSelectedUsers(e)
                                                         }} isMulti />
                                                     <div className="addUser">
-                                                    <Button onClick={addUsers(selectedUsers)} className = "addUser" variant="contained" color="primary">
+                                                    <Button onClick={()=>addUsers()} className = "addUser" variant="contained" color="primary">
                                                        Add Users
                                                     </Button>
                                                     </div>

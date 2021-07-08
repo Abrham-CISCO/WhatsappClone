@@ -27,17 +27,12 @@ function SidebarChat({id, name, addNewChat}) {
         setSeed(Math.floor(Math.random()*5000))
     }, [])
     const createChat = () => {
-        var members = [];
-        var uDate=firebase.firestore.FieldValue.serverTimestamp();
-        members.pop();
-        members.push({uid:user.uid,admin:true});
         const roomName = prompt("Please enter name for chat room");
         if(roomName) {
             // do some clever database staff...
             db.collection('rooms').add({
                 name: roomName,
                 creator: user.uid,
-                members:members,
                 createdOn:firebase.firestore.FieldValue.serverTimestamp()
             })
         }
