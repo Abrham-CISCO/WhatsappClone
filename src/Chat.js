@@ -17,17 +17,13 @@ import Select from 'react-select';
 function Chat() {
     const [seed, setSeed] = useState("");
     const [input, setInput] = useState("");
+    const [users, setUsers] = useState({});
     const [selectedUsers, setSelectedUsers] = useState([])
     const { roomId } = useParams();
     const [roomName, setRoomName] = useState("");
     const [messages, setMessages] = useState([]);
     const [{user}, dispatch] = UseStateValue();
-    const options = [
-        { value: 'Abrham Getachew', label: 'Abrham Getachew' },
-        { value: 'Getachew Biru', label: 'Getachew Biru' },
-        { value: 'Sosina Sehalu', label: 'Sosina Sehalu' },
-        { value: 'Ruth Getachew', label: 'Ruth Getachew' }
-      ]
+
     useEffect(()=> {
         if(roomId){
             db.collection('rooms').doc(roomId)
@@ -56,6 +52,33 @@ function Chat() {
         })
         setInput("");
     }
+
+    const addUsers = (user) => {
+        useParams.foreach(user=>{
+            db.collection('rooms').doc(roomId)
+            .collection('members').add({
+                uid:user,
+                admin:false
+            })    
+        })
+    }
+
+    db.collection('user').onSnapshot(snapshot => (
+        setUsers(snapshot.docs.map((doc)=>({
+            id:doc.id,
+            data: doc.data()
+        })
+        ))
+    ))
+
+    const options = []
+    options.pop();
+    users.foreach(user=>{
+        options.push({
+            value:user.data.uid,
+            label:user.data.name
+        })    
+    })
 
     return (
         <div className = "chat">
@@ -125,10 +148,10 @@ function Chat() {
                                                         <option value="Getachew Birru">Getachew Birru</option>
                                                         </select>*/}
                                                         <Select options={options} onChange={(e)=>{
-                                                            console.log(e)
+                                                            setSelectedUsers(e)
                                                         }} isMulti />
                                                     <div className="addUser">
-                                                    <Button className = "addUser" variant="contained" color="primary">
+                                                    <Button onClick={addUsers(selectedUsers)} className = "addUser" variant="contained" color="primary">
                                                        Add Users
                                                     </Button>
                                                     </div>
