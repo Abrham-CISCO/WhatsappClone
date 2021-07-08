@@ -41,7 +41,7 @@ function nonGroupMembers(roomId)
     var members = GroupMembers(roomId);
     var allUsers = allUsers();
     var found = false;
-    var nonMembers = allUsers.map(user=>{
+    var nonMembers = allUsers.forEach(user=>{
         found = false;
         members.forEach(member => {
             if(user.uid === member.uid) found = true;
@@ -84,16 +84,6 @@ function Sidebar()
                 <IconButton>
                     <ChatIcon />
                 </IconButton>
-                <Popup trigger={<IconButton><MoreVertIcon /></IconButton>} position="top left">
-                    {close => (
-                    <div>
-                        Content here
-                        <a className="close" onClick={close}>
-                        &times;
-                        </a>
-                    </div>
-                    )}
-                </Popup>
             </div>
         </div>
         <div className="sidebar__search">
