@@ -14,6 +14,55 @@ import Popup from 'reactjs-popup'
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import 'reactjs-popup/dist/index.css';
 import Select from 'react-select';
+//import { ProgressPlugin } from 'webpack';
+
+
+
+function Members({users}){
+    const { roomId } = useParams();
+    const [roomMembers, setRoomMembers] = useState([])
+
+    useEffect(()=> {    
+        db.collection('rooms').doc(roomId).collection('members')
+        .onSnapshot(snapshoot => {
+            setRoomMembers(snapshoot.docs.map(doc => doc.data()))
+        })
+    },[roomId])    
+    roomMembers.forEach(member=>{
+        users.forEach(user=>{
+            console.log(user.data.uid, member.uid)
+            if(user.data.uid === member.uid)
+            {
+                member.name = user.data.name;
+                member.pic = user.data.profilePic;
+            }
+        })
+    })
+
+    const removeMember = (uid) => {
+        console.log("1")
+        db.collection('rooms').doc(roomId).collection('members').where('uid','==',uid)
+        .onSnapshot(snapshot => {
+            snapshot.docs.forEach(doc=>db.collection('rooms').doc(roomId).collection('members')
+            .doc(doc.id).delete()) 
+        })   
+        // console.log("2")
+    }
+
+    return(
+        roomMembers.map(member => (
+            <div className="member" key={member.uid}>
+                <Avatar src={member.pic}/>
+                <snap className="memberName">{member.name}</snap> 
+                <br/>
+                <Button variant="contained" onClick={()=>removeMember(member.uid)} color="primary">
+                    Remove Member
+                </Button>
+            </div>
+        )))
+}
+
+
 function Chat() {
     const [seed, setSeed] = useState("");
     const [input, setInput] = useState("");
@@ -23,7 +72,7 @@ function Chat() {
     const [roomName, setRoomName] = useState("");
     const [messages, setMessages] = useState([]);
     const [{user}, dispatch] = UseStateValue();
-
+    var membersJSX;
 
     useEffect(()=> {
         if(roomId){
@@ -62,7 +111,6 @@ function Chat() {
                 admin:false
             })    
         })
-        console.log(selectedUsers);
     }
 
     useEffect(()=> {
@@ -114,8 +162,7 @@ function Chat() {
 
                             <h3>Members</h3>
                                 <div className="members">
-
-                                    <div className="member">
+                                  {/*<div className="member">
                                         <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`}/>
                                         <snap className="memberName">Abrham Getachew</snap>
                                     </div>
@@ -131,10 +178,8 @@ function Chat() {
                                         <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`}/>
                                         <snap className="memberName">Abrham Getachew</snap>
                                     </div>
-                                    <div className="member">
-                                        <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`}/>
-                                        <snap className="memberName">Abrham Getachew</snap>
-                                    </div>
+                    */}
+                    <Members users={candidateUsers}/>
                                     <div className="member">
                                         <div className = "addNewMember">
                                             <Popup trigger={<IconButton><AddIcon /></IconButton>} position="bottom right" modal nested>
@@ -145,14 +190,6 @@ function Chat() {
                                                     </button>
                                                     <h1>Add Members</h1>
                                                     <p>From the following list of users select the user you want to add to the group and then click add</p>
-                                                    {/*<select name="userList" id="userList" multiple={true}
-                                                        onChange={(e)=> {setSelectedUsers(e.target.value)
-                                                                        console.log(e.target.value)}} value={selectedUsers}>
-                                                        <option value="Abrham Getachew">Abrham Getachew</option>
-                                                        <option value="Sosina Sehalu">Sosina Sehalu</option>
-                                                        <option value="Ruth Getachew">Ruth Getachew</option>
-                                                        <option value="Getachew Birru">Getachew Birru</option>
-                                                        </select>*/}
                                                         <Select options={options} onChange={(e)=>{
                                                             setSelectedUsers(e)
                                                         }} isMulti />
