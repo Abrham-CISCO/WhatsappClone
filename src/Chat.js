@@ -16,8 +16,6 @@ import 'reactjs-popup/dist/index.css';
 import Select from 'react-select';
 //import { ProgressPlugin } from 'webpack';
 
-
-
 function Members({users}){
     const { roomId } = useParams();
     const [roomMembers, setRoomMembers] = useState([])
@@ -30,7 +28,6 @@ function Members({users}){
     },[roomId])    
     roomMembers.forEach(member=>{
         users.forEach(user=>{
-            console.log(user.data.uid, member.uid)
             if(user.data.uid === member.uid)
             {
                 member.name = user.data.name;
@@ -40,13 +37,11 @@ function Members({users}){
     })
 
     const removeMember = (uid) => {
-        console.log("1")
         db.collection('rooms').doc(roomId).collection('members').where('uid','==',uid)
         .onSnapshot(snapshot => {
             snapshot.docs.forEach(doc=>db.collection('rooms').doc(roomId).collection('members')
             .doc(doc.id).delete()) 
         })   
-        // console.log("2")
     }
 
     return(
@@ -68,17 +63,21 @@ function Chat() {
     const [input, setInput] = useState("");
     const [candidateUsers,setCandidateUsers] = useState([])
     const [selectedUsers, setSelectedUsers] = useState([])
+    const [roomMembers, setRoomMembers] = useState([])
     const { roomId } = useParams();
     const [roomName, setRoomName] = useState("");
     const [messages, setMessages] = useState([]);
     const [{user}, dispatch] = UseStateValue();
-    var membersJSX;
-
+ 
     useEffect(()=> {
         if(roomId){
             db.collection('rooms').doc(roomId)
             .onSnapshot(snapshoot => {
                 setRoomName(snapshoot.data().name)
+            })
+            db.collection('rooms').doc(roomId)
+            .collection('members').onSnapshot(snapshoot=>{
+               setRoomMembers(snapshoot.docs.map(doc => doc.data()))
             })
             db.collection('rooms').doc(roomId)
             .collection("messages").orderBy('timestamp','asc')
@@ -122,19 +121,29 @@ function Chat() {
             ))
         )
         )
+
     },[roomId])
 
-        
+    var isMember = false;        
     const options = []
     options.pop();
     candidateUsers.forEach(candidateUser=>{
-        options.push({
-            value:candidateUser.data.uid,
-            label:candidateUser.data.name
-        })    
+        roomMembers.forEach(member=>{
+            if(candidateUser.data.uid === member.uid)
+            {
+                isMember = true;
+            }
+        })
+        if(!isMember)
+        {
+            options.push({
+                value:candidateUser.data.uid,
+                label:candidateUser.data.name
+            })    
+        }
+        isMember = false;
     })
 
-    console.log(options)
     return (
         <div className = "chat">
             <div className="chat__header">

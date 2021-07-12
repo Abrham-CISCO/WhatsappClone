@@ -24,11 +24,9 @@ function login() {
                     snapshoot.docs.forEach((doc)=> {
                         if(doc.data().uid === result.user.uid)
                         {
-                            //This code is not working debug it later  
                             userIsRegistered = true;
                         }    
-                    })
-                })
+                    })   
                 if(!userIsRegistered)
                 {
                     db.collection('user').add({
@@ -38,9 +36,9 @@ function login() {
                         joinDate:firebase.firestore.FieldValue.serverTimestamp()
                     })            
                 }
+                })
             })
             .catch(err=>alert(err.message));
-            console.log(users)
     }
 
     return (
