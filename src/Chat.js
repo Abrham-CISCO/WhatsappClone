@@ -14,7 +14,6 @@ import Popup from 'reactjs-popup'
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import 'reactjs-popup/dist/index.css';
 import Select from 'react-select';
-//import { ProgressPlugin } from 'webpack';
 
 function Members({users}){
     const { roomId } = useParams();
@@ -153,7 +152,6 @@ function Chat() {
                         <button className="close" onClick={close}>
                         &times;
                         </button>
-
                         <div className = "groupDetail">
                             <div className = "groupPhName">
                                 <div className = "groupAvatar">
@@ -168,27 +166,9 @@ function Chat() {
                                 <p>This is group description</p>
                             </div>
                             <div className = "groupMembers">
-
                             <h3>Members</h3>
                                 <div className="members">
-                                  {/*<div className="member">
-                                        <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`}/>
-                                        <snap className="memberName">Abrham Getachew</snap>
-                                    </div>
-                                    <div className="member">
-                                        <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`}/>
-                                        <snap className="memberName">Abrham Getachew</snap>
-                                    </div>
-                                    <div className="member">
-                                        <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`}/>
-                                        <snap className="memberName">Abrham Getachew</snap>
-                                    </div>
-                                    <div className="member">
-                                        <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`}/>
-                                        <snap className="memberName">Abrham Getachew</snap>
-                                    </div>
-                    */}
-                    <Members users={candidateUsers}/>
+                                <Members users={candidateUsers}/>
                                     <div className="member">
                                         <div className = "addNewMember">
                                             <Popup trigger={<IconButton><AddIcon /></IconButton>} position="bottom right" modal nested>
@@ -213,12 +193,9 @@ function Chat() {
                                         </div>  
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
-
-
                     )}
                 </Popup>
             <div className="chat__headerInfo">

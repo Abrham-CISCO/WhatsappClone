@@ -18,6 +18,14 @@ function allUsers()
     })
 }
 
+function wait(ms){
+    var start = new Date().getTime();
+    var end = start;
+    while(end < start + ms) {
+      end = new Date().getTime();
+   }
+ }
+
 function addUserToAGroup(roomId, userID)
 {
     db.collection('rooms').doc(roomId)
@@ -53,24 +61,43 @@ function nonGroupMembers(roomId)
 }
 function Sidebar()
 {
+    var Urooms = [];
+    Urooms.pop();
     const [{user},dispatch]= UseStateValue();
     const [rooms, setRooms] = useState([]);
+    const [tRooms, settRooms] = useState([]);
     useEffect(() => {
         const unsubscribe =  db.collection('rooms').onSnapshot(snapshot => (
-            setRooms(snapshot.docs.map((doc)=>({
+            settRooms(snapshot.docs.map((doc)=>({
                 id:doc.id,
                 data: doc.data()
             })
             ))
         ))
-    
+        tRooms.forEach((room)=>{
+            db.collection('rooms').doc(room.id).collection('members').onSnapshot(
+                snapshot => {
+                    var members = snapshot.docs.map((doc) => ({
+                        admin: doc.data().admin,
+                        uid: doc.data().uid
+                    }));
+                    console.log(members)
+                    members.forEach(member => {
+                        if (member.uid === user.uid) {
+                            console.log("compare ", room.id, user.uid, member.uid);
+                            Urooms.push({ id: room.id, data: room.data });
+                            setRooms(Urooms)
+                        }
+                    });
+                }
+            )
+        })
+        Urooms = [];
         return() => {
             unsubscribe();
         }
         }
-        , 
-        
-        [])
+        ,[])
             console.log("rooms",rooms);
     return(
     <div className="sidebar">
