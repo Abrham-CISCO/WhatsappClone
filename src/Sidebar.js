@@ -86,12 +86,16 @@ function Sidebar()
                         if (member.uid === user.uid) {
                             console.log("compare ", room.id, user.uid, member.uid);
                             Urooms.push({ id: room.id, data: room.data });
-                            setRooms(Urooms)
+        setRooms(Urooms)
+
                         }
                     });
                 }
             )
         })
+        wait(5000)
+        console.log("Urooms",Urooms)
+        console.log("rooms", rooms)
         Urooms = [];
         return() => {
             unsubscribe();
