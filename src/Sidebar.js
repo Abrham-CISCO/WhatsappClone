@@ -81,7 +81,7 @@ function Sidebar()
                         admin: doc.data().admin,
                         uid: doc.data().uid
                     }));
-                    console.log(members)
+                    console.log("Members",members)
                     members.forEach(member => {
                         if (member.uid === user.uid) {
                             console.log("compare ", room.id, user.uid, member.uid);
